@@ -7,4 +7,7 @@
     <Project Path="services/IdentityService/Identity.Infrastructure/Identity.Infrastructure.csproj" />
     <Project Path="services/IdentityService/Identity.Tests/Identity.Tests.csproj" />
   </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/BuildingBlocks/BuildingBlocks.csproj" />
+  </Folder>
 </Solution>
