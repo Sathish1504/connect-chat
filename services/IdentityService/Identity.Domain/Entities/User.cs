@@ -1,4 +1,6 @@
-﻿public class User
+﻿namespace Identity.Domain.Entities;
+
+public class User
 {
     public Guid Id { get; private set; }
 
