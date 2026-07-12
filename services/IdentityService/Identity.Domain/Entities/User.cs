@@ -24,6 +24,10 @@ public class User
 
     public DateTime? LastSeenAt { get; private set; }
 
+    public string? RefreshToken { get; private set; }
+
+    public DateTime? RefreshTokenExpiryTime { get; private set; }
+
     private User() { }
 
     public User(string userName, string email, string passwordHash)
@@ -68,4 +72,12 @@ public class User
         ProfilePicture = picture;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public void SetRefreshToken(string refreshToken, DateTime expiryTime)
+    {
+        RefreshToken = refreshToken;
+        RefreshTokenExpiryTime = expiryTime;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
 }

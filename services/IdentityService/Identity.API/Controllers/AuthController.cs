@@ -1,4 +1,7 @@
-﻿using Identity.Application.Features.Authentication.Register;
+﻿using LoginCommand = Identity.Application.Features.Authentication.Login.Command;
+using LoginResponse = Identity.Application.Features.Authentication.Login.Response;
+using RegisterCommand = Identity.Application.Features.Authentication.Register.Command;
+using RegisterResponse = Identity.Application.Features.Authentication.Register.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +19,24 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<Response>> Register(Command command)
+    [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<RegisterResponse>> Register(
+        RegisterCommand command,
+        CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<LoginResponse>> Login(
+        LoginCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
     }
