@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using FluentValidation;
 
 namespace Identity.API.Middleware;
 
@@ -31,13 +32,14 @@ public sealed class GlobalExceptionMiddleware
     }
 
     private static async Task HandleExceptionAsync(
-        HttpContext context,
-        Exception exception)
+    HttpContext context,
+    Exception exception)
     {
         context.Response.ContentType = "application/json";
 
         var statusCode = exception switch
         {
+            ValidationException => HttpStatusCode.BadRequest,
             UnauthorizedAccessException => HttpStatusCode.Unauthorized,
             ArgumentException => HttpStatusCode.BadRequest,
             KeyNotFoundException => HttpStatusCode.NotFound,
@@ -46,12 +48,30 @@ public sealed class GlobalExceptionMiddleware
 
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new
+        object response;
+
+        if (exception is ValidationException validationException)
         {
-            Status = context.Response.StatusCode,
-            Title = statusCode.ToString(),
-            Detail = exception.Message
-        };
+            response = new
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Validation Failed",
+                Errors = validationException.Errors
+                    .GroupBy(x => x.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(x => x.ErrorMessage).ToArray())
+            };
+        }
+        else
+        {
+            response = new
+            {
+                Status = context.Response.StatusCode,
+                Title = statusCode.ToString(),
+                Detail = exception.Message
+            };
+        }
 
         await context.Response.WriteAsync(
             JsonSerializer.Serialize(response));

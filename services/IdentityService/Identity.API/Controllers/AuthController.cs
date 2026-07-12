@@ -4,6 +4,9 @@ using RegisterCommand = Identity.Application.Features.Authentication.Register.Co
 using RegisterResponse = Identity.Application.Features.Authentication.Register.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Identity.API.Controllers;
 
@@ -39,5 +42,21 @@ public class AuthController : ControllerBase
         var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        return Ok(new
+        {
+            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub),
+
+            UserName = User.Identity?.Name,
+
+            Email = User.FindFirstValue(ClaimTypes.Email)
+                ?? User.FindFirstValue(JwtRegisteredClaimNames.Email)
+        });
     }
 }

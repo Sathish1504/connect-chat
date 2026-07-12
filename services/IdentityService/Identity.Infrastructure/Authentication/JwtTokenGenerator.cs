@@ -30,12 +30,18 @@ public sealed class JwtTokenGenerator : IJwtTokenGenerator
             SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            new(JwtRegisteredClaimNames.UniqueName, user.UserName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            {
+                // ASP.NET Core standard claims
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email),
+
+                // Standard JWT claims
+                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
         var expiresAt = DateTime.UtcNow.AddMinutes(
             _settings.AccessTokenExpirationMinutes);
