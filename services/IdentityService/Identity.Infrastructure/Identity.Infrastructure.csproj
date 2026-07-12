@@ -16,7 +16,6 @@
     <Folder Include="Authentication\" />
     <Folder Include="Migrations\" />
     <Folder Include="Services\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
