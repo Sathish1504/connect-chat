@@ -1,4 +1,6 @@
-﻿namespace Identity.Domain.Entities;
+﻿
+namespace Identity.Domain.Entities;
+
 
 public class User
 {
@@ -61,12 +63,6 @@ public class User
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void ChangePassword(string hash)
-    {
-        PasswordHash = hash;
-        UpdatedAt = DateTime.UtcNow;
-    }
-
     public void UpdateProfilePicture(string picture)
     {
         ProfilePicture = picture;
@@ -84,6 +80,12 @@ public class User
     {
         RefreshToken = null;
         RefreshTokenExpiryTime = null;
+    }
+
+    public void ChangePassword(string passwordHash)
+    {
+        PasswordHash = passwordHash;
+        UpdatedAt = DateTime.UtcNow;
     }
 
 }
