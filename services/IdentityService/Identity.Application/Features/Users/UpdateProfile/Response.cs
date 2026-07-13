@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Identity.Application.Features.Users.UpdateProfile;
 
-namespace Identity.Application.Features.Users.UpdateProfile
-{
-    internal class Response
-    {
-    }
-}
+public sealed record Response(
+    string Message);
