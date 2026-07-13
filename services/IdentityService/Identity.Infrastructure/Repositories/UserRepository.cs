@@ -62,4 +62,16 @@ public sealed class UserRepository : IUserRepository
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<User?> GetByIdAsync(
+    Guid id,
+    CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .SingleOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+    }
+
+
 }
