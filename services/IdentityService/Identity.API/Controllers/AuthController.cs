@@ -10,7 +10,7 @@ using SendVerificationEmailCommand =
     Identity.Application.Features.Authentication.SendVerificationEmail.SendVerificationEmailCommand;
 using SendVerificationEmailResponse =
     Identity.Application.Features.Authentication.SendVerificationEmail.SendVerificationEmailResponse;
-
+using Identity.Application.Features.Authentication.VerifyEmail;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -103,6 +103,19 @@ public class AuthController : ControllerBase
     CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("verify-email")]
+    [ProducesResponseType(typeof(VerifyEmailResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<VerifyEmailResponse>> VerifyEmail(
+    [FromQuery] string token,
+    CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new VerifyEmailCommand(token),
+            cancellationToken);
 
         return Ok(response);
     }
