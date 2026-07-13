@@ -80,4 +80,10 @@ public class User
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void RevokeRefreshToken()
+    {
+        RefreshToken = null;
+        RefreshTokenExpiryTime = null;
+    }
+
 }

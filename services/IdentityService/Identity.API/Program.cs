@@ -1,16 +1,18 @@
+using Identity.API.Middleware;
+using Identity.API.Services;
 using Identity.Application;
 using Identity.Application.Common.Settings;
 using Identity.Application.Interfaces;
+using Identity.Infrastructure.Authentication;
 using Identity.Infrastructure.Persistence;
 using Identity.Infrastructure.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Identity.Infrastructure.Authentication;
-using Identity.API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +81,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();

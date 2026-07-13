@@ -4,6 +4,8 @@ using RegisterCommand = Identity.Application.Features.Authentication.Register.Co
 using RegisterResponse = Identity.Application.Features.Authentication.Register.Response;
 using RefreshTokenCommand = Identity.Application.Features.Authentication.Refresh.RefreshTokenCommand;
 using RefreshTokenResponse = Identity.Application.Features.Authentication.Refresh.RefreshTokenResponse;
+using LogoutCommand = Identity.Application.Features.Authentication.Logout.LogoutCommand;
+using LogoutResponse = Identity.Application.Features.Authentication.Logout.LogoutResponse;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +73,20 @@ public class AuthController : ControllerBase
     CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(typeof(LogoutResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<LogoutResponse>> Logout(
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new LogoutCommand(),
+            cancellationToken);
 
         return Ok(result);
     }
