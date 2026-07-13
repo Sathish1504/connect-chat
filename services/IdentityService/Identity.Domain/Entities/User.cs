@@ -30,6 +30,8 @@ public class User
 
     public DateTime? RefreshTokenExpiryTime { get; private set; }
 
+
+
     private User() { }
 
     public User(string userName, string email, string passwordHash)
@@ -85,6 +87,15 @@ public class User
     public void ChangePassword(string passwordHash)
     {
         PasswordHash = passwordHash;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateProfile(
+    string userName,
+    string? profilePicture)
+    {
+        UserName = userName;
+        ProfilePicture = profilePicture;
         UpdatedAt = DateTime.UtcNow;
     }
 
