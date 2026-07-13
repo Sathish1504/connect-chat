@@ -30,7 +30,9 @@ public class User
 
     public DateTime? RefreshTokenExpiryTime { get; private set; }
 
+    public string? EmailVerificationToken { get; private set; }
 
+    public DateTime? EmailVerificationTokenExpiryTime { get; private set; }
 
     private User() { }
 
@@ -62,6 +64,10 @@ public class User
     public void ConfirmEmail()
     {
         EmailConfirmed = true;
+
+        EmailVerificationToken = null;
+        EmailVerificationTokenExpiryTime = null;
+
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -97,6 +103,14 @@ public class User
         UserName = userName;
         ProfilePicture = profilePicture;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SetEmailVerificationToken(
+    string token,
+    DateTime expiryTime)
+    {
+        EmailVerificationToken = token;
+        EmailVerificationTokenExpiryTime = expiryTime;
     }
 
 }

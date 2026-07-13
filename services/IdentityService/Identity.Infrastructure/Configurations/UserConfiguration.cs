@@ -30,5 +30,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.ProfilePicture)
             .HasMaxLength(500);
+
+        builder.Property(x => x.EmailVerificationToken)
+    .HasMaxLength(256);
+
+        builder.Property(x => x.EmailVerificationTokenExpiryTime);
     }
 }
