@@ -44,4 +44,22 @@ public sealed class UserRepository : IUserRepository
     {
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<User?> GetByRefreshTokenAsync(
+    string refreshToken,
+    CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(
+                u => u.RefreshToken == refreshToken,
+                cancellationToken);
+    }
+
+    public async Task UpdateAsync(
+        User user,
+        CancellationToken cancellationToken)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

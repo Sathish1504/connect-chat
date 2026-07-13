@@ -2,6 +2,9 @@
 using LoginResponse = Identity.Application.Features.Authentication.Login.Response;
 using RegisterCommand = Identity.Application.Features.Authentication.Register.Command;
 using RegisterResponse = Identity.Application.Features.Authentication.Register.Response;
+using RefreshTokenCommand = Identity.Application.Features.Authentication.Refresh.RefreshTokenCommand;
+using RefreshTokenResponse = Identity.Application.Features.Authentication.Refresh.RefreshTokenResponse;
+
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -58,5 +61,17 @@ public class AuthController : ControllerBase
             Email = User.FindFirstValue(ClaimTypes.Email)
                 ?? User.FindFirstValue(JwtRegisteredClaimNames.Email)
         });
+    }
+
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(RefreshTokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<RefreshTokenResponse>> Refresh(
+    RefreshTokenCommand command,
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
     }
 }
