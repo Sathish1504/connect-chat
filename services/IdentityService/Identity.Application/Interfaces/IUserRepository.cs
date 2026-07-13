@@ -18,4 +18,12 @@ public interface IUserRepository
 
     Task SaveChangesAsync(
         CancellationToken cancellationToken);
+
+    Task<User?> GetByRefreshTokenAsync(
+    string refreshToken,
+    CancellationToken cancellationToken);
+
+    Task UpdateAsync(
+        User user,
+        CancellationToken cancellationToken);
 }
