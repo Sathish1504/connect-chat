@@ -6,6 +6,7 @@ using Identity.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Identity.Infrastructure.Email;
 
 namespace Identity.Infrastructure;
 
@@ -27,6 +28,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddJwtAuthentication(configuration);
+        services.AddScoped<IEmailService, ConsoleEmailService>();
 
         return services;
     }
