@@ -6,6 +6,11 @@ using RefreshTokenCommand = Identity.Application.Features.Authentication.Refresh
 using RefreshTokenResponse = Identity.Application.Features.Authentication.Refresh.RefreshTokenResponse;
 using LogoutCommand = Identity.Application.Features.Authentication.Logout.LogoutCommand;
 using LogoutResponse = Identity.Application.Features.Authentication.Logout.LogoutResponse;
+using SendVerificationEmailCommand =
+    Identity.Application.Features.Authentication.SendVerificationEmail.SendVerificationEmailCommand;
+using SendVerificationEmailResponse =
+    Identity.Application.Features.Authentication.SendVerificationEmail.SendVerificationEmailResponse;
+using Identity.Application.Features.Authentication.VerifyEmail;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -89,5 +94,29 @@ public class AuthController : ControllerBase
             cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPost("send-verification-email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<SendVerificationEmailResponse>> SendVerificationEmail(
+    [FromBody] SendVerificationEmailCommand command,
+    CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpGet("verify-email")]
+    [ProducesResponseType(typeof(VerifyEmailResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<VerifyEmailResponse>> VerifyEmail(
+    [FromQuery] string token,
+    CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new VerifyEmailCommand(token),
+            cancellationToken);
+
+        return Ok(response);
     }
 }

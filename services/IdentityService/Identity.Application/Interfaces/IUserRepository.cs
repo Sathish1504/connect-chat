@@ -12,6 +12,10 @@ public interface IUserRepository
         string email,
         CancellationToken cancellationToken);
 
+    Task<User?> GetByEmailVerificationTokenAsync(
+        string token,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(
         User user,
         CancellationToken cancellationToken);
