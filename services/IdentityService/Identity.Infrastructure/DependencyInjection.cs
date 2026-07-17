@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Identity.Infrastructure.Email;
+using Identity.Application.Interfaces.Security;
+using Identity.Infrastructure.Security;
 
 namespace Identity.Infrastructure;
 
@@ -29,6 +31,8 @@ public static class DependencyInjection
 
         services.AddJwtAuthentication(configuration);
         services.AddScoped<IEmailService, ConsoleEmailService>();
+
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
         return services;
     }

@@ -82,4 +82,14 @@ public sealed class UserRepository : IUserRepository
                 x => x.EmailVerificationToken == token,
                 cancellationToken);
     }
+
+    public async Task<User?> GetByPasswordResetTokenAsync(
+    string token,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(
+                x => x.PasswordResetToken == token,
+                cancellationToken);
+    }
 }

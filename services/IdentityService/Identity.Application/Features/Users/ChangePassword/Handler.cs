@@ -1,4 +1,5 @@
 ﻿using Identity.Application.Interfaces;
+using Identity.Application.Interfaces.Security;
 using MediatR;
 
 namespace Identity.Application.Features.Users.ChangePassword;
@@ -7,13 +8,16 @@ public sealed class Handler : IRequestHandler<Command, Response>
 {
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IPasswordHasher _passwordHasher;
 
     public Handler(
         IUserRepository userRepository,
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _currentUserService = currentUserService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Response> Handle(
@@ -34,7 +38,7 @@ public sealed class Handler : IRequestHandler<Command, Response>
             throw new KeyNotFoundException("User not found.");
         }
 
-        var isValidPassword = BCrypt.Net.BCrypt.Verify(
+        var isValidPassword = _passwordHasher.VerifyPassword(
             request.CurrentPassword,
             user.PasswordHash);
 
@@ -43,7 +47,7 @@ public sealed class Handler : IRequestHandler<Command, Response>
             throw new UnauthorizedAccessException("Current password is incorrect.");
         }
 
-        var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(
+        var newPasswordHash = _passwordHasher.HashPassword(
             request.NewPassword);
 
         user.ChangePassword(newPasswordHash);

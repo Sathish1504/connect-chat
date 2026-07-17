@@ -1,5 +1,5 @@
-﻿using BCrypt.Net;
-using Identity.Application.Interfaces;
+﻿using Identity.Application.Interfaces;
+using Identity.Application.Interfaces.Security;
 using Identity.Domain.Entities;
 using MediatR;
 
@@ -8,10 +8,14 @@ namespace Identity.Application.Features.Authentication.Register;
 public sealed class Handler : IRequestHandler<Command, Response>
 {
     private readonly IUserRepository _repository;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public Handler(IUserRepository repository)
+    public Handler(
+        IUserRepository repository,
+        IPasswordHasher passwordHasher)
     {
         _repository = repository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Response> Handle(
@@ -23,7 +27,7 @@ public sealed class Handler : IRequestHandler<Command, Response>
             throw new Exception("Email already exists.");
         }
 
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        var passwordHash = _passwordHasher.HashPassword(request.Password);
 
         var user = new User(
             request.UserName,

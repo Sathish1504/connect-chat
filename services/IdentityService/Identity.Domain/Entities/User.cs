@@ -34,6 +34,10 @@ public class User
 
     public DateTime? EmailVerificationTokenExpiryTime { get; private set; }
 
+    public string? PasswordResetToken { get; private set; }
+
+    public DateTime? PasswordResetTokenExpiryTime { get; private set; }
+
     private User() { }
 
     public User(string userName, string email, string passwordHash)
@@ -93,6 +97,7 @@ public class User
     public void ChangePassword(string passwordHash)
     {
         PasswordHash = passwordHash;
+        ClearPasswordResetToken();
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -111,6 +116,24 @@ public class User
     {
         EmailVerificationToken = token;
         EmailVerificationTokenExpiryTime = expiryTime;
+    }
+
+    public void SetPasswordResetToken(
+    string token,
+    DateTime expiryTime)
+    {
+        PasswordResetToken = token;
+        PasswordResetTokenExpiryTime = expiryTime;
+
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ClearPasswordResetToken()
+    {
+        PasswordResetToken = null;
+        PasswordResetTokenExpiryTime = null;
+
+        UpdatedAt = DateTime.UtcNow;
     }
 
 }

@@ -35,5 +35,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     .HasMaxLength(256);
 
         builder.Property(x => x.EmailVerificationTokenExpiryTime);
+
+        builder.Property(x => x.PasswordResetToken)
+    .HasMaxLength(256);
+
+        builder.Property(x => x.PasswordResetTokenExpiryTime);
     }
 }
