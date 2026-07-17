@@ -11,7 +11,9 @@ using SendVerificationEmailCommand =
 using SendVerificationEmailResponse =
     Identity.Application.Features.Authentication.SendVerificationEmail.SendVerificationEmailResponse;
 using Identity.Application.Features.Authentication.VerifyEmail;
-
+using Identity.Application.Features.Authentication.ForgotPassword;
+using ResetPasswordCommand = Identity.Application.Features.Authentication.ResetPassword.Command;
+using ResetPasswordResponse = Identity.Application.Features.Authentication.ResetPassword.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -116,6 +118,28 @@ public class AuthController : ControllerBase
         var response = await _mediator.Send(
             new VerifyEmailCommand(token),
             cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(typeof(ForgotPasswordResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ForgotPasswordResponse>> ForgotPassword(
+    [FromBody] ForgotPasswordCommand command,
+    CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPost("reset-password")]
+    [ProducesResponseType(typeof(ResetPasswordResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ResetPasswordResponse>> ResetPassword(
+    [FromBody] ResetPasswordCommand command,
+    CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(command, cancellationToken);
 
         return Ok(response);
     }

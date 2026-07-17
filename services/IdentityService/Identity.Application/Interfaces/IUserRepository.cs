@@ -34,4 +34,8 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(
     Guid id,
     CancellationToken cancellationToken);
+
+    Task<User?> GetByPasswordResetTokenAsync(
+    string token,
+    CancellationToken cancellationToken = default);
 }
