@@ -4,5 +4,11 @@ namespace Chat.Application.Interfaces;
 
 public interface IConversationRepository
 {
-    Task<Conversation> AddAsync(Conversation conversation, CancellationToken cancellationToken);
+    Task<Conversation> AddAsync(
+        Conversation conversation,
+        CancellationToken cancellationToken);
+
+    Task<Conversation?> GetByIdAsync(
+        Guid conversationId,
+        CancellationToken cancellationToken);
 }

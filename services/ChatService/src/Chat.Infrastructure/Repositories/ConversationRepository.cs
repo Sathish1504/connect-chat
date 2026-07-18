@@ -24,4 +24,16 @@ public class ConversationRepository : IConversationRepository
 
         return conversation;
     }
+
+    public async Task<Conversation?> GetByIdAsync(
+        Guid conversationId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Conversations
+            .Include(c => c.Participants)
+            .Include(c => c.Messages)
+            .FirstOrDefaultAsync(
+                c => c.Id == conversationId,
+                cancellationToken);
+    }
 }
