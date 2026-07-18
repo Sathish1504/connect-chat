@@ -20,6 +20,7 @@ public static class MessageEndpoints
                     $"/api/messages/{result.MessageId}",
                     result);
             })
+            .RequireAuthorization()
             .WithName("SendMessage")
             .WithTags("Messages");
 

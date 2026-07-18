@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Chat.Application.Features.Conversations.GetConversation;
+namespace Chat.Application.Features.Conversations.GetConversations;
 
-public sealed record GetConversationQuery(Guid ConversationId)
-    : IRequest<GetConversationResponse>;
+public sealed record GetConversationsQuery()
+    : IRequest<IReadOnlyList<ConversationSummaryResponse>>;

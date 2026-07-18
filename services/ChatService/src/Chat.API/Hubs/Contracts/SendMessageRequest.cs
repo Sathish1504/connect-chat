@@ -4,6 +4,6 @@ namespace Chat.API.Hubs.Contracts;
 
 public sealed record SendMessageRequest(
     Guid ConversationId,
-    Guid SenderId,
+    //Guid SenderId,
     string Content,
     MessageType Type);

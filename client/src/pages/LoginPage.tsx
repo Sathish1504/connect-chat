@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../features/authentication/authService";
-import { tokenStorage } from "../auth/tokenStorage";
+import { login as loginApi } from "../features/authentication/authService";
+import { useAuth } from "../auth/AuthContext";
 
 export default function LoginPage() {
 
     const navigate = useNavigate();
+
+    const { login: authenticate } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,14 +25,15 @@ export default function LoginPage() {
 
         try {
 
-            const result = await login({
+            const result = await loginApi({
                 email,
                 password
             });
 
-            tokenStorage.setTokens(
+            authenticate(
                 result.accessToken,
-                result.refreshToken);
+                result.refreshToken
+            );
 
             navigate("/dashboard");
 
