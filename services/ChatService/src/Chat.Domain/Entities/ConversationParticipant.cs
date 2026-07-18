@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Chat.Domain.Entities;
 
-namespace Chat.Domain.Entities
+public class ConversationParticipant
 {
-    internal class ConversationParticipant
-    {
-    }
+    public Guid Id { get; set; }
+
+    public Guid ConversationId { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public DateTime JoinedAt { get; set; }
+
+    public Conversation Conversation { get; set; } = null!;
 }
