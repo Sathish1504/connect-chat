@@ -26,4 +26,11 @@ public sealed class ChatHub : Hub
             Context.ConnectionId,
             HubGroups.Conversation(conversationId));
     }
+
+    public async Task LeaveConversation(Guid conversationId)
+    {
+        await Groups.RemoveFromGroupAsync(
+            Context.ConnectionId,
+            HubGroups.Conversation(conversationId));
+    }
 }
