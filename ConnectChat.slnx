@@ -1,5 +1,15 @@
 <Solution>
   <Folder Name="/services/" />
+  <Folder Name="/services/ChatService/" />
+  <Folder Name="/services/ChatService/src/">
+    <Project Path="services/ChatService/src/Chat.API/Chat.API.csproj" />
+    <Project Path="services/ChatService/src/Chat.Application/Chat.Application.csproj" />
+    <Project Path="services/ChatService/src/Chat.Domain/Chat.Domain.csproj" />
+    <Project Path="services/ChatService/src/Chat.Infrastructure/Chat.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/ChatService/tests/">
+    <Project Path="services/ChatService/tests/Chat.Tests/Chat.Tests.csproj" />
+  </Folder>
   <Folder Name="/services/IdentityService/">
     <Project Path="services/IdentityService/Identity.API/Identity.API.csproj" />
     <Project Path="services/IdentityService/Identity.Application/Identity.Application.csproj" />
