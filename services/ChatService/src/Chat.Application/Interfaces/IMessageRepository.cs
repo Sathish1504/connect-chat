@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Chat.Domain.Entities;
 
-namespace Chat.Application.Interfaces
+namespace Chat.Application.Interfaces;
+
+public interface IMessageRepository
 {
-    internal interface IMessageRepository
-    {
-    }
+    Task<Message> AddAsync(
+        Message message,
+        CancellationToken cancellationToken);
 }

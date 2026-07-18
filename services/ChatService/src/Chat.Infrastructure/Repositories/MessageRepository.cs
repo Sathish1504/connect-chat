@@ -1,10 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Chat.Application.Interfaces;
+using Chat.Domain.Entities;
+using Chat.Infrastructure.Persistence;
 
-namespace Chat.Infrastructure.Repositories
+namespace Chat.Infrastructure.Repositories;
+
+public class MessageRepository : IMessageRepository
 {
-    internal class MessageRepository
+    private readonly ApplicationDbContext _context;
+
+    public MessageRepository(ApplicationDbContext context)
     {
+        _context = context;
+    }
+
+    public async Task<Message> AddAsync(
+        Message message,
+        CancellationToken cancellationToken)
+    {
+        await _context.Messages.AddAsync(message, cancellationToken);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return message;
     }
 }

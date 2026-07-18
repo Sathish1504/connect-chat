@@ -36,4 +36,16 @@ public class ConversationRepository : IConversationRepository
                 c => c.Id == conversationId,
                 cancellationToken);
     }
+
+    public async Task<bool> IsParticipantAsync(
+    Guid conversationId,
+    Guid userId,
+    CancellationToken cancellationToken)
+    {
+        return await _context.ConversationParticipants
+            .AnyAsync(
+                x => x.ConversationId == conversationId &&
+                     x.UserId == userId,
+                cancellationToken);
+    }
 }

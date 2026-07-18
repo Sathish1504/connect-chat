@@ -11,4 +11,6 @@ public class ConversationParticipant
     public DateTime JoinedAt { get; set; }
 
     public Conversation Conversation { get; set; } = null!;
+
+
 }

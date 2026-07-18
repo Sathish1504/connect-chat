@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Chat.Application.Features.Messages.SendMessage;
 
-namespace Chat.Application.Features.Messages.SendMessage
-{
-    internal class SendMessageResponse
-    {
-    }
-}
+public sealed record SendMessageResponse(
+    Guid MessageId,
+    string Status);

@@ -25,4 +25,6 @@ app.MapControllers();
 
 app.MapConversationEndpoints();
 
+app.MapMessageEndpoints();
+
 app.Run();

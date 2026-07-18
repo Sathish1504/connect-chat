@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Chat.Domain.Enums;
+using MediatR;
 
-namespace Chat.Application.Features.Messages.SendMessage
-{
-    internal class SendMessageCommand
-    {
-    }
-}
+namespace Chat.Application.Features.Messages.SendMessage;
+
+public sealed record SendMessageCommand(
+    Guid ConversationId,
+    Guid SenderId,
+    string Content,
+    MessageType Type)
+    : IRequest<SendMessageResponse>;

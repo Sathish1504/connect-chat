@@ -11,4 +11,9 @@ public interface IConversationRepository
     Task<Conversation?> GetByIdAsync(
         Guid conversationId,
         CancellationToken cancellationToken);
+
+    Task<bool> IsParticipantAsync(
+        Guid conversationId,
+        Guid userId,
+        CancellationToken cancellationToken);
 }
