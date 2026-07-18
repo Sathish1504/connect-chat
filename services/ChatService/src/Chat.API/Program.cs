@@ -14,11 +14,25 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerDocumentation();
 builder.Services.AddSignalR();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactClient", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 app.UseSwaggerDocumentation();
 
 app.UseHttpsRedirection();
+
+app.UseCors("ReactClient");
 
 app.UseAuthentication();
 
