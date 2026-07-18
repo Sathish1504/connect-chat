@@ -10,13 +10,16 @@ public sealed class SendMessageHandler
 {
     private readonly IConversationRepository _conversationRepository;
     private readonly IMessageRepository _messageRepository;
+    private readonly ICurrentUserService _currentUser;
 
     public SendMessageHandler(
         IConversationRepository conversationRepository,
-        IMessageRepository messageRepository)
+        IMessageRepository messageRepository,
+        ICurrentUserService currentUser)
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
+        _currentUser = currentUser;
     }
 
     public async Task<SendMessageResponse> Handle(
@@ -30,19 +33,22 @@ public sealed class SendMessageHandler
         if (conversation is null)
             throw new InvalidOperationException("Conversation not found.");
 
+        var senderId = _currentUser.UserId;
+
         var isParticipant = await _conversationRepository.IsParticipantAsync(
             request.ConversationId,
-            request.SenderId,
+            senderId,
             cancellationToken);
 
         if (!isParticipant)
-            throw new InvalidOperationException("Sender is not a participant of this conversation.");
+            throw new InvalidOperationException(
+                "You are not a participant of this conversation.");
 
         var message = new Message
         {
             Id = Guid.NewGuid(),
             ConversationId = request.ConversationId,
-            SenderId = request.SenderId,
+            SenderId = senderId,
             Content = request.Content,
             Type = request.Type,
             Status = MessageStatus.Sent,

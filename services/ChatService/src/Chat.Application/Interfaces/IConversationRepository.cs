@@ -1,4 +1,5 @@
 ﻿using Chat.Domain.Entities;
+using Chat.Application.Features.Conversations.GetConversations;
 
 namespace Chat.Application.Interfaces;
 
@@ -14,6 +15,11 @@ public interface IConversationRepository
 
     Task<bool> IsParticipantAsync(
         Guid conversationId,
+        Guid userId,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<ConversationSummaryResponse>>
+    GetUserConversationsAsync(
         Guid userId,
         CancellationToken cancellationToken);
 }

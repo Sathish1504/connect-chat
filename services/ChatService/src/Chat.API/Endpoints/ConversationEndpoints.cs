@@ -1,4 +1,5 @@
 ﻿using Chat.Application.Features.Conversations.CreateConversation;
+using Chat.Application.Features.Conversations.GetConversations;
 using MediatR;
 
 namespace Chat.API.Endpoints;
@@ -21,6 +22,21 @@ public static class ConversationEndpoints
             })
             .WithName("CreateConversation")
             .WithTags("Conversations");
+
+        app.MapGet("/api/conversations",
+    async (
+        ISender sender,
+        CancellationToken cancellationToken) =>
+    {
+        var result = await sender.Send(
+            new GetConversationsQuery(),
+            cancellationToken);
+
+        return Results.Ok(result);
+    })
+    .RequireAuthorization()
+    .WithName("GetConversations")
+    .WithTags("Conversations");
 
         return app;
     }

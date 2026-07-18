@@ -10,9 +10,6 @@ public class SendMessageValidator : AbstractValidator<SendMessageCommand>
         RuleFor(x => x.ConversationId)
             .NotEmpty();
 
-        RuleFor(x => x.SenderId)
-            .NotEmpty();
-
         RuleFor(x => x.Type)
             .IsInEnum();
 

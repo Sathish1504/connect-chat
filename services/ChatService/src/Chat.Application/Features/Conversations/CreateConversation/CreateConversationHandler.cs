@@ -8,11 +8,14 @@ public sealed class CreateConversationHandler
     : IRequestHandler<CreateConversationCommand, CreateConversationResponse>
 {
     private readonly IConversationRepository _conversationRepository;
+    private readonly ICurrentUserService _currentUser;
 
     public CreateConversationHandler(
-        IConversationRepository conversationRepository)
+        IConversationRepository conversationRepository,
+        ICurrentUserService currentUser)
     {
         _conversationRepository = conversationRepository;
+        _currentUser = currentUser;
     }
 
     public async Task<CreateConversationResponse> Handle(
@@ -25,12 +28,14 @@ public sealed class CreateConversationHandler
             Type = request.Type,
             Name = request.Name,
             CreatedAt = DateTime.UtcNow,
-
-            // Later we'll replace this with the authenticated user's ID
-            CreatedBy = request.ParticipantIds.First()
+            CreatedBy = _currentUser.UserId
         };
 
-        foreach (var participantId in request.ParticipantIds.Distinct())
+        var participants = request.ParticipantIds
+            .Append(_currentUser.UserId)
+            .Distinct();
+
+        foreach (var participantId in participants)
         {
             conversation.Participants.Add(new ConversationParticipant
             {

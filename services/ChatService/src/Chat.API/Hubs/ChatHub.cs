@@ -43,11 +43,13 @@ public sealed class ChatHub : Hub
     }
 
     public async Task<SendMessageResponse> SendMessageRealtime(
-        SendMessageRequest request)
+    SendMessageRequest request)
     {
+        var senderId = Guid.Parse(
+            Context.User!.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
         var command = new SendMessageCommand(
             request.ConversationId,
-            request.SenderId,
             request.Content,
             request.Type);
 
@@ -58,8 +60,8 @@ public sealed class ChatHub : Hub
             .SendAsync("ReceiveMessage", new
             {
                 response.MessageId,
-                request.ConversationId,
-                request.SenderId,
+                ConversationId = request.ConversationId,
+                SenderId = senderId,
                 request.Content,
                 request.Type,
                 Status = response.Status
@@ -67,4 +69,5 @@ public sealed class ChatHub : Hub
 
         return response;
     }
+
 }

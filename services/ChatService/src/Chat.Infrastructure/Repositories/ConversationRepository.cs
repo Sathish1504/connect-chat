@@ -2,6 +2,7 @@
 using Chat.Domain.Entities;
 using Chat.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Chat.Application.Features.Conversations.GetConversations;
 
 namespace Chat.Infrastructure.Repositories;
 
@@ -47,5 +48,28 @@ public class ConversationRepository : IConversationRepository
                 x => x.ConversationId == conversationId &&
                      x.UserId == userId,
                 cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ConversationSummaryResponse>>
+    GetUserConversationsAsync(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.ConversationParticipants
+            .Where(cp => cp.UserId == userId)
+            .Select(cp => cp.Conversation)
+            .Select(c => new ConversationSummaryResponse(
+                c.Id,
+                c.Name ?? "Direct Chat",
+                c.Type,
+                c.Messages
+                    .OrderByDescending(m => m.CreatedAt)
+                    .Select(m => m.Content)
+                    .FirstOrDefault(),
+                c.Messages
+                    .OrderByDescending(m => m.CreatedAt)
+                    .Select(m => (DateTime?)m.CreatedAt)
+                    .FirstOrDefault()))
+            .ToListAsync(cancellationToken);
     }
 }
