@@ -19,4 +19,11 @@ public sealed class ChatHub : Hub
 
         await base.OnDisconnectedAsync(exception);
     }
+
+    public async Task JoinConversation(Guid conversationId)
+    {
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId,
+            HubGroups.Conversation(conversationId));
+    }
 }
