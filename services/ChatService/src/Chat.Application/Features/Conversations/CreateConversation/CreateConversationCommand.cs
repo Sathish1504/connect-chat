@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Chat.Domain.Enums;
+using MediatR;
 
-namespace Chat.Application.Features.Conversations.CreateConversation
-{
-    internal class CreateConversationCommand
-    {
-    }
-}
+namespace Chat.Application.Features.Conversations.CreateConversation;
+
+public sealed record CreateConversationCommand(
+    ConversationType Type,
+    string? Name,
+    List<Guid> ParticipantIds)
+    : IRequest<CreateConversationResponse>;

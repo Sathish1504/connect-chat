@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Chat.Application.Features.Conversations.CreateConversation;
 
-namespace Chat.Application.Features.Conversations.CreateConversation
-{
-    internal class CreateConversationResponse
-    {
-    }
-}
+public sealed record CreateConversationResponse(
+    Guid ConversationId,
+    string Message);

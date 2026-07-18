@@ -1,5 +1,6 @@
 using Chat.Application;
 using Chat.Infrastructure;
+using Chat.API.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,5 +22,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.MapConversationEndpoints();
 
 app.Run();
