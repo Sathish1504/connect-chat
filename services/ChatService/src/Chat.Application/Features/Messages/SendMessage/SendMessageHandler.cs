@@ -59,6 +59,6 @@ public sealed class SendMessageHandler
 
         return new SendMessageResponse(
             message.Id,
-            message.Status.ToString());
+            message.Status);
     }
 }

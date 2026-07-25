@@ -59,17 +59,24 @@ public class ConversationRepository : IConversationRepository
             .Where(cp => cp.UserId == userId)
             .Select(cp => cp.Conversation)
             .Select(c => new ConversationSummaryResponse(
-                c.Id,
-                c.Name ?? "Direct Chat",
-                c.Type,
-                c.Messages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => m.Content)
-                    .FirstOrDefault(),
-                c.Messages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => (DateTime?)m.CreatedAt)
-                    .FirstOrDefault()))
+                                  c.Id,
+                                  c.Name ?? "Direct Chat",
+                                  c.Type,
+
+                                  c.Participants
+                                      .Where(p => p.UserId != userId)
+                                      .Select(p => p.UserId)
+                                      .FirstOrDefault(),
+
+                                  c.Messages
+                                      .OrderByDescending(m => m.CreatedAt)
+                                      .Select(m => m.Content)
+                                      .FirstOrDefault(),
+
+                                  c.Messages
+                                      .OrderByDescending(m => m.CreatedAt)
+                                      .Select(m => (DateTime?)m.CreatedAt)
+                                      .FirstOrDefault()))
             .ToListAsync(cancellationToken);
     }
 }

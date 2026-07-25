@@ -9,6 +9,16 @@ public interface IMessageRepository
         CancellationToken cancellationToken);
 
     Task<IReadOnlyList<Message>> GetByConversationIdAsync(
+        Guid conversationId,
+        CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> MarkConversationDeliveredAsync(
     Guid conversationId,
+    Guid currentUserId,
+    CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Guid>> MarkConversationReadAsync(
+    Guid conversationId,
+    Guid currentUserId,
     CancellationToken cancellationToken);
 }
