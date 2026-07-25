@@ -1,15 +1,56 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
     onSend: (content: string) => Promise<void>;
+    onTypingStart?: () => void;
+    onTypingStop?: () => void;
 }
 
 export default function MessageInput({
-    onSend
+    onSend,
+    onTypingStart,
+    onTypingStop
 }: Props) {
 
-    const [message, setMessage] =
-        useState("");
+    const [message, setMessage] = useState("");
+
+    const typingStarted = useRef(false);
+
+    const stopTypingTimer = useRef<number | null>(null);
+
+    function resetStopTypingTimer() {
+
+        if (stopTypingTimer.current !== null) {
+            window.clearTimeout(stopTypingTimer.current);
+        }
+
+        stopTypingTimer.current = window.setTimeout(() => {
+
+            typingStarted.current = false;
+
+            onTypingStop?.();
+
+        }, 3000);
+
+    }
+
+    function handleTyping(
+        value: string
+    ) {
+
+        setMessage(value);
+
+        if (!typingStarted.current && value.trim()) {
+
+            typingStarted.current = true;
+
+            onTypingStart?.();
+
+        }
+
+        resetStopTypingTimer();
+
+    }
 
     async function handleSend() {
 
@@ -19,6 +60,21 @@ export default function MessageInput({
         await onSend(message);
 
         setMessage("");
+
+        if (typingStarted.current) {
+
+            typingStarted.current = false;
+
+            onTypingStop?.();
+
+        }
+
+        if (stopTypingTimer.current) {
+
+            window.clearTimeout(stopTypingTimer.current);
+
+        }
+
     }
 
     async function handleKeyDown(
@@ -33,6 +89,26 @@ export default function MessageInput({
 
     }
 
+    useEffect(() => {
+
+        return () => {
+
+            if (stopTypingTimer.current) {
+
+                window.clearTimeout(stopTypingTimer.current);
+
+            }
+
+            if (typingStarted.current) {
+
+                onTypingStop?.();
+
+            }
+
+        };
+
+    }, [onTypingStop]);
+
     return (
 
         <div
@@ -46,9 +122,7 @@ export default function MessageInput({
 
             <input
                 value={message}
-                onChange={e =>
-                    setMessage(e.target.value)
-                }
+                onChange={e => handleTyping(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type a message..."
                 style={{

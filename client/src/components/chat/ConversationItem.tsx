@@ -1,5 +1,7 @@
 import type { Conversation } from "../../types/conversation";
 
+import { usePresence } from "../../features/presence/PresenceContext";
+
 interface Props {
     conversation: Conversation;
     selected: boolean;
@@ -11,7 +13,15 @@ export default function ConversationItem({
     selected,
     onClick
 }: Props) {
+
+    const { isUserOnline } = usePresence();
+
+    const online = isUserOnline(
+        conversation.otherParticipantId
+    );
+
     return (
+
         <div
             onClick={onClick}
             style={{
@@ -21,23 +31,50 @@ export default function ConversationItem({
                 background: selected ? "#f5f5f5" : "white"
             }}
         >
+
             <div
                 style={{
-                    fontWeight: 600
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8
                 }}
             >
-                {conversation.name}
+
+                <span
+                    style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: "50%",
+                        backgroundColor: online
+                            ? "#22c55e"
+                            : "#9ca3af",
+                        flexShrink: 0
+                    }}
+                />
+
+                <div
+                    style={{
+                        fontWeight: 600
+                    }}
+                >
+                    {conversation.name}
+                </div>
+
             </div>
 
             <div
                 style={{
                     color: "#666",
                     fontSize: 14,
-                    marginTop: 4
+                    marginTop: 4,
+                    marginLeft: 18
                 }}
             >
                 {conversation.lastMessage}
             </div>
+
         </div>
+
     );
+
 }

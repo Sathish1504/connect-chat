@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Message } from "../../types/message";
 import type { RealtimeMessage } from "../../types/realtimeMessage";
 
 import { useAuth } from "../../auth/AuthContext";
-import { getMessages } from "../../features/chat/messageService";
+import {
+    getMessages,
+    markConversationDelivered,
+    markConversationRead
+} from "../../features/chat/messageService";
 import { signalRService } from "../../features/chat/signalrService";
 
 import MessageInput from "./MessageInput";
@@ -21,6 +25,18 @@ export default function ChatWindow({
     const { user } = useAuth();
 
     const [messages, setMessages] = useState<Message[]>([]);
+
+    const [typingUser, setTypingUser] = useState<string | null>(null);
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+
+        bottomRef.current?.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }, [messages]);
 
     useEffect(() => {
 
@@ -40,6 +56,13 @@ export default function ChatWindow({
                     activeConversationId
                 );
 
+                await markConversationDelivered(
+                    activeConversationId
+                );
+
+                await markConversationRead(
+                    activeConversationId
+                );
                 if (mounted) {
                     setMessages(history);
                 }
@@ -67,6 +90,7 @@ export default function ChatWindow({
                         if (message.conversationId !== activeConversationId)
                             return;
 
+
                         const newMessage: Message = {
 
                             id: message.messageId,
@@ -77,7 +101,7 @@ export default function ChatWindow({
 
                             type: message.type,
 
-                            status: 0,
+                            status: message.status,
 
                             createdAt: new Date().toISOString()
 
@@ -99,7 +123,97 @@ export default function ChatWindow({
 
                         });
 
+
+                        if (message.senderId !== user?.id) {
+
+                            void markConversationDelivered(
+                                activeConversationId
+                            );
+
+                            void markConversationRead(
+                                activeConversationId
+                            );
+
+                        }
+
                     });
+
+                signalRService.onUserTyping(data => {
+
+                    if (!mounted)
+                        return;
+
+                    if (data.conversationId !== activeConversationId)
+                        return;
+
+                    if (data.userId === user?.id)
+                        return;
+
+                    setTypingUser(data.userName);
+
+                });
+
+                signalRService.onUserStoppedTyping(data => {
+
+                    if (!mounted)
+                        return;
+
+                    if (data.conversationId !== activeConversationId)
+                        return;
+
+                    setTypingUser(null);
+
+                });
+
+                signalRService.onMessageDelivered(data => {
+
+                    if (!mounted)
+                        return;
+
+                    if (data.conversationId !== activeConversationId)
+                        return;
+
+                    setMessages(previous =>
+                        previous.map(message =>
+
+                            message.id === data.messageId
+                                ? {
+                                    ...message,
+                                    status: data.status
+                                }
+                                : message
+
+                        )
+                    );
+
+                });
+
+                signalRService.onMessageRead(data => {
+
+                    if (!mounted)
+                        return;
+
+                    if (data.conversationId !== activeConversationId)
+                        return;
+
+                    setMessages(previous =>
+                        previous.map(message => {
+
+                            if (message.id === data.messageId) {
+
+                                return {
+                                    ...message,
+                                    status: data.status
+                                };
+
+                            }
+
+                            return message;
+
+                        })
+                    );
+
+                });
 
             }
             catch (error) {
@@ -117,6 +231,10 @@ export default function ChatWindow({
             mounted = false;
 
             signalRService.offReceiveMessage();
+            signalRService.offUserTyping();
+            signalRService.offUserStoppedTyping();
+            signalRService.offMessageDelivered();
+            signalRService.offMessageRead();
 
             void signalRService.leaveConversation(
                 activeConversationId
@@ -124,7 +242,7 @@ export default function ChatWindow({
 
         };
 
-    }, [conversationId]);
+    }, [conversationId, user?.id]);
 
     async function handleSend(
         content: string
@@ -138,6 +256,45 @@ export default function ChatWindow({
             await signalRService.sendMessage(
                 conversationId,
                 content
+            );
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+    async function handleTypingStart() {
+
+        if (!conversationId)
+            return;
+
+        try {
+
+            await signalRService.startTyping(
+                conversationId
+            );
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+    async function handleTypingStop() {
+
+        if (!conversationId)
+            return;
+
+        try {
+
+            await signalRService.stopTyping(
+                conversationId
             );
 
         }
@@ -188,14 +345,32 @@ export default function ChatWindow({
                 <h2>Messages</h2>
 
                 <MessageList
+                    ref={bottomRef}
                     messages={messages}
                     currentUserId={user?.id ?? ""}
                 />
 
             </div>
 
+            {typingUser && (
+
+                <div
+                    style={{
+                        padding: "0 20px 10px",
+                        fontSize: 13,
+                        color: "#666",
+                        fontStyle: "italic"
+                    }}
+                >
+                    {typingUser} is typing...
+                </div>
+
+            )}
+
             <MessageInput
                 onSend={handleSend}
+                onTypingStart={handleTypingStart}
+                onTypingStop={handleTypingStop}
             />
 
         </div>

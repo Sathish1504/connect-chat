@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 import type { Message } from "../../types/message";
 import MessageBubble from "./MessageBubble";
 
@@ -6,22 +8,28 @@ interface Props {
     currentUserId: string;
 }
 
-export default function MessageList({
-    messages,
-    currentUserId
-}: Props) {
+const MessageList = forwardRef<HTMLDivElement, Props>(
+    ({ messages, currentUserId }, ref) => {
 
-    return (
-        <>
-            {messages.map(message => (
-                <MessageBubble
-                    key={message.id}
-                    message={message}
-                    isOwnMessage={
-                        message.senderId === currentUserId
-                    }
-                />
-            ))}
-        </>
-    );
-}
+        return (
+            <>
+                {messages.map(message => (
+                    <MessageBubble
+                        key={message.id}
+                        message={message}
+                        isOwnMessage={
+                            message.senderId === currentUserId
+                        }
+                    />
+                ))}
+
+                <div ref={ref} />
+            </>
+        );
+
+    }
+);
+
+MessageList.displayName = "MessageList";
+
+export default MessageList;

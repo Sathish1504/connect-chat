@@ -10,6 +10,15 @@ export interface RealtimeMessage {
 
     type: number;
 
-    status: string;
+    status: number;
+}
+
+export interface MessageDeliveredEvent {
+
+    conversationId: string;
+
+    messageId: string;
+
+    status: number;
 
 }

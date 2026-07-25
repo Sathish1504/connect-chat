@@ -10,6 +10,49 @@ export default function MessageBubble({
     isOwnMessage
 }: Props) {
 
+    function renderStatus() {
+
+        if (!isOwnMessage)
+            return null;
+
+        if (message.isPending) {
+            return (
+                <span
+                    style={{
+                        fontStyle: "italic"
+                    }}
+                >
+                    Sending...
+                </span>
+            );
+        }
+
+        switch (message.status) {
+
+            case 1:
+                return <span>✓</span>;
+
+            case 2:
+                return <span>✓✓</span>;
+
+            case 3:
+                return (
+                    <span
+                        style={{
+                            color: "#fcfcfc",
+                            fontWeight: 600
+                        }}
+                    >
+                        ✓✓
+                    </span>
+                );
+
+            default:
+                return null;
+        }
+
+    }
+
     return (
 
         <div
@@ -30,7 +73,9 @@ export default function MessageBubble({
                     backgroundColor: isOwnMessage
                         ? "#2563eb"
                         : "#2d3748",
-                    color: "white"
+                    color: "white",
+                    opacity: message.isPending ? 0.6 : 1,
+                    transition: "opacity 0.2s ease"
                 }}
             >
 
@@ -42,17 +87,25 @@ export default function MessageBubble({
 
                 <div
                     style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 8,
                         fontSize: 11,
                         opacity: 0.7,
                         marginTop: 6
                     }}
                 >
 
-                    {new Date(message.createdAt)
-                        .toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        })}
+                    <span>
+                        {new Date(message.createdAt)
+                            .toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            })}
+                    </span>
+
+                    {renderStatus()}
 
                 </div>
 
