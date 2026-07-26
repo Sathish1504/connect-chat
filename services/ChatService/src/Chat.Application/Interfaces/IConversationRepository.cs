@@ -22,4 +22,9 @@ public interface IConversationRepository
     GetUserConversationsAsync(
         Guid userId,
         CancellationToken cancellationToken);
+
+    Task<Conversation?> GetDirectConversationAsync(
+    Guid user1Id,
+    Guid user2Id,
+    CancellationToken cancellationToken);
 }

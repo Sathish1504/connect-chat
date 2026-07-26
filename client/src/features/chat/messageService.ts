@@ -17,9 +17,32 @@ export async function sendMessage(
     conversationId: string,
     content: string
 ) {
-    return chatApi.post(ApiEndpoints.messages, {
-        conversationId,
-        content,
-        type: 0
-    });
+    return chatApi.post(
+        ApiEndpoints.messages,
+        {
+            conversationId,
+            content,
+            type: 0
+        });
+}
+
+export async function markConversationDelivered(
+    conversationId: string
+): Promise<void> {
+
+    await chatApi.post(
+        `${ApiEndpoints.conversations}/${conversationId}/delivered`
+    );
+
+}
+
+
+export async function markConversationRead(
+    conversationId: string
+): Promise<void> {
+
+    await chatApi.post(
+        `${ApiEndpoints.conversations}/${conversationId}/read`
+    );
+
 }

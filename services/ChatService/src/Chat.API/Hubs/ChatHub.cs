@@ -3,6 +3,7 @@ using Chat.Application.Features.Messages.SendMessage;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace Chat.API.Hubs;
 
@@ -42,6 +43,44 @@ public sealed class ChatHub : Hub
             HubGroups.Conversation(conversationId));
     }
 
+    public async Task StartTyping(Guid conversationId)
+    {
+        var userId = Guid.Parse(
+            Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var userName =
+            Context.User?.Identity?.Name
+            ?? Context.User?.FindFirst(ClaimTypes.Email)?.Value
+            ?? "Unknown";
+
+        await Clients
+            .OthersInGroup(HubGroups.Conversation(conversationId))
+            .SendAsync(
+                "UserTyping",
+                new UserTypingDto
+                {
+                    ConversationId = conversationId,
+                    UserId = userId,
+                    UserName = userName
+                });
+    }
+
+    public async Task StopTyping(Guid conversationId)
+    {
+        var userId = Guid.Parse(
+            Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        await Clients
+            .OthersInGroup(HubGroups.Conversation(conversationId))
+            .SendAsync(
+                "UserStoppedTyping",
+                new
+                {
+                    ConversationId = conversationId,
+                    UserId = userId
+                });
+    }
+
     public async Task<SendMessageResponse> SendMessageRealtime(
     SendMessageRequest request)
     {
@@ -64,7 +103,7 @@ public sealed class ChatHub : Hub
                 SenderId = senderId,
                 request.Content,
                 request.Type,
-                Status = response.Status
+                Status = (int)response.Status
             });
 
         return response;

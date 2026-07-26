@@ -6,7 +6,8 @@ import {
 } from "@microsoft/signalr";
 
 import { tokenStorage } from "../../auth/tokenStorage";
-import type { RealtimeMessage } from "../../types/realtimeMessage";
+import type { RealtimeMessage, MessageDeliveredEvent } from "../../types/realtimeMessage";
+import type { MessageReadEvent } from "../../types/messageReadEvent";
 
 class SignalRService {
 
@@ -65,6 +66,34 @@ class SignalRService {
         );
     }
 
+    async startTyping(
+        conversationId: string
+    ): Promise<void> {
+
+        if (!this.connection)
+            return;
+
+        await this.connection.invoke(
+            "StartTyping",
+            conversationId
+        );
+
+    }
+
+    async stopTyping(
+        conversationId: string
+    ): Promise<void> {
+
+        if (!this.connection)
+            return;
+
+        await this.connection.invoke(
+            "StopTyping",
+            conversationId
+        );
+
+    }
+
     async sendMessage(
         conversationId: string,
         content: string,
@@ -101,9 +130,112 @@ class SignalRService {
             });
     }
 
+    onUserTyping(
+        handler: (data: {
+            conversationId: string;
+            userId: string;
+            userName: string;
+        }) => void
+    ): void {
+
+        if (!this.connection)
+            return;
+
+        this.connection.off("UserTyping");
+
+        this.connection.on(
+            "UserTyping",
+            handler
+        );
+
+    }
+
+    offUserTyping(): void {
+
+        this.connection?.off(
+            "UserTyping"
+        );
+
+    }
+
+    onUserStoppedTyping(
+        handler: (data: {
+            conversationId: string;
+            userId: string;
+        }) => void
+    ): void {
+
+        if (!this.connection)
+            return;
+
+        this.connection.off(
+            "UserStoppedTyping"
+        );
+
+        this.connection.on(
+            "UserStoppedTyping",
+            handler
+        );
+
+    }
+
+    offUserStoppedTyping(): void {
+
+        this.connection?.off(
+            "UserStoppedTyping"
+        );
+
+    }
+
     offReceiveMessage(): void {
 
         this.connection?.off("ReceiveMessage");
+
+    }
+    onMessageDelivered(
+        handler: (data: MessageDeliveredEvent) => void
+    ): void {
+
+        if (!this.connection)
+            return;
+
+        this.connection.off("MessageDelivered");
+
+        this.connection.on(
+            "MessageDelivered",
+            handler
+        );
+    }
+
+    offMessageDelivered(): void {
+
+        this.connection?.off(
+            "MessageDelivered"
+        );
+
+    }
+
+    onMessageRead(
+        handler: (data: MessageReadEvent) => void
+    ): void {
+
+        if (!this.connection)
+            return;
+
+        this.connection.off("MessageRead");
+
+        this.connection.on(
+            "MessageRead",
+            handler
+        );
+
+    }
+
+    offMessageRead(): void {
+
+        this.connection?.off(
+            "MessageRead"
+        );
 
     }
 

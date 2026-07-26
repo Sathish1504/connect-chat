@@ -59,17 +59,39 @@ public class ConversationRepository : IConversationRepository
             .Where(cp => cp.UserId == userId)
             .Select(cp => cp.Conversation)
             .Select(c => new ConversationSummaryResponse(
-                c.Id,
-                c.Name ?? "Direct Chat",
-                c.Type,
-                c.Messages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => m.Content)
-                    .FirstOrDefault(),
-                c.Messages
-                    .OrderByDescending(m => m.CreatedAt)
-                    .Select(m => (DateTime?)m.CreatedAt)
-                    .FirstOrDefault()))
+                                  c.Id,
+                                  c.Name ?? "Direct Chat",
+                                  c.Type,
+
+                                  c.Participants
+                                      .Where(p => p.UserId != userId)
+                                      .Select(p => p.UserId)
+                                      .FirstOrDefault(),
+
+                                  c.Messages
+                                      .OrderByDescending(m => m.CreatedAt)
+                                      .Select(m => m.Content)
+                                      .FirstOrDefault(),
+
+                                  c.Messages
+                                      .OrderByDescending(m => m.CreatedAt)
+                                      .Select(m => (DateTime?)m.CreatedAt)
+                                      .FirstOrDefault()))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Conversation?> GetDirectConversationAsync(
+    Guid user1Id,
+    Guid user2Id,
+    CancellationToken cancellationToken)
+    {
+        return await _context.Conversations
+            .Include(c => c.Participants)
+            .Where(c => c.Type == Chat.Domain.Enums.ConversationType.Direct)
+            .FirstOrDefaultAsync(c =>
+                c.Participants.Count == 2 &&
+                c.Participants.Any(p => p.UserId == user1Id) &&
+                c.Participants.Any(p => p.UserId == user2Id),
+                cancellationToken);
     }
 }

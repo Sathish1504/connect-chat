@@ -1,4 +1,5 @@
 ﻿using Chat.Application.Features.Messages.GetConversationMessages;
+using Chat.Application.Features.Messages.MarkConversationRead;
 using Chat.Application.Features.Messages.SendMessage;
 using MediatR;
 
@@ -37,6 +38,24 @@ public static class MessageEndpoints
                 return Results.Ok(result);
             })
             .WithName("GetConversationMessages")
+            .WithTags("Messages");
+
+
+            app.MapPost(
+            "/api/conversations/{conversationId:guid}/read",
+            async (
+                Guid conversationId,
+                ISender sender,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await sender.Send(
+                    new MarkConversationReadCommand(conversationId),
+                    cancellationToken);
+
+                return Results.Ok(result);
+            })
+            .RequireAuthorization()
+            .WithName("MarkConversationRead")
             .WithTags("Messages");
 
         return app;
