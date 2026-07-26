@@ -5,4 +5,6 @@ export const ApiEndpoints = {
 
   conversations: "/conversations",
   messages: "/messages",
+
+  users: "/users"
 };

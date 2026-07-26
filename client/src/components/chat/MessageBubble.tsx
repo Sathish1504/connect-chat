@@ -17,11 +17,7 @@ export default function MessageBubble({
 
         if (message.isPending) {
             return (
-                <span
-                    style={{
-                        fontStyle: "italic"
-                    }}
-                >
+                <span className="italic text-[11px] text-slate-300">
                     Sending...
                 </span>
             );
@@ -30,19 +26,22 @@ export default function MessageBubble({
         switch (message.status) {
 
             case 1:
-                return <span>✓</span>;
+                return (
+                    <span className="text-slate-200">
+                        ✓
+                    </span>
+                );
 
             case 2:
-                return <span>✓✓</span>;
+                return (
+                    <span className="text-slate-200">
+                        ✓✓
+                    </span>
+                );
 
             case 3:
                 return (
-                    <span
-                        style={{
-                            color: "#fcfcfc",
-                            fontWeight: 600
-                        }}
-                    >
+                    <span className="font-semibold text-sky-500">
                         ✓✓
                     </span>
                 );
@@ -56,45 +55,56 @@ export default function MessageBubble({
     return (
 
         <div
-            style={{
-                display: "flex",
-                justifyContent: isOwnMessage
-                    ? "flex-end"
-                    : "flex-start",
-                marginBottom: 12
-            }}
+            className={`
+                mb-4
+                flex
+                animate-[fadeIn_.18s_ease]
+                ${isOwnMessage
+                    ? "justify-end"
+                    : "justify-start"}
+            `}
         >
 
             <div
-                style={{
-                    maxWidth: "70%",
-                    padding: "12px 16px",
-                    borderRadius: 16,
-                    backgroundColor: isOwnMessage
-                        ? "#2563eb"
-                        : "#2d3748",
-                    color: "white",
-                    opacity: message.isPending ? 0.6 : 1,
-                    transition: "opacity 0.2s ease"
-                }}
+                className={`
+                    max-w-[72%]
+                    rounded-3xl
+                    px-4
+                    py-3
+                    shadow-md
+                    transition-all
+                    duration-200
+                    hover:shadow-lg
+                    ${isOwnMessage
+                        ? "rounded-br-md bg-blue-600 text-white"
+                        : "rounded-bl-md bg-slate-700 text-white"}
+                    ${message.isPending
+                        ? "opacity-60"
+                        : "opacity-100"}
+                `}
             >
 
-                <div>
-
+                <div
+                    className="
+                        break-words
+                        whitespace-pre-wrap
+                        text-[15px]
+                        leading-6
+                    "
+                >
                     {message.content}
-
                 </div>
 
                 <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 8,
-                        fontSize: 11,
-                        opacity: 0.7,
-                        marginTop: 6
-                    }}
+                    className="
+                        mt-2
+                        flex
+                        items-center
+                        justify-end
+                        gap-2
+                        text-[11px]
+                        text-white/70
+                    "
                 >
 
                     <span>

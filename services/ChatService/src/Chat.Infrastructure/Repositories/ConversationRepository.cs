@@ -79,4 +79,19 @@ public class ConversationRepository : IConversationRepository
                                       .FirstOrDefault()))
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Conversation?> GetDirectConversationAsync(
+    Guid user1Id,
+    Guid user2Id,
+    CancellationToken cancellationToken)
+    {
+        return await _context.Conversations
+            .Include(c => c.Participants)
+            .Where(c => c.Type == Chat.Domain.Enums.ConversationType.Direct)
+            .FirstOrDefaultAsync(c =>
+                c.Participants.Count == 2 &&
+                c.Participants.Any(p => p.UserId == user1Id) &&
+                c.Participants.Any(p => p.UserId == user2Id),
+                cancellationToken);
+    }
 }

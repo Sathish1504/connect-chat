@@ -92,4 +92,14 @@ public sealed class UserRepository : IUserRepository
                 x => x.PasswordResetToken == token,
                 cancellationToken);
     }
+
+
+    public async Task<List<User>> GetAllAsync(
+    CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .OrderBy(x => x.UserName)
+            .ToListAsync(cancellationToken);
+    }
 }

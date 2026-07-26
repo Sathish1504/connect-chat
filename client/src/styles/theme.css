@@ -1,0 +1,29 @@
+:root {
+
+    --primary: #2563eb;
+
+    --primary-light: #3b82f6;
+
+    --success: #22c55e;
+
+    --background: #f5f7fb;
+
+    --sidebar: #ffffff;
+
+    --header: #e8e7ed;
+
+    --incoming: #e5e7eb;
+
+    --outgoing: #2563eb;
+
+    --text: #111827;
+
+    --text-secondary: #6b7280;
+
+    --border: #e5e7eb;
+
+    --hover: #f3f4f6;
+
+    --shadow: 0 4px 12px rgba(0,0,0,.08);
+
+}

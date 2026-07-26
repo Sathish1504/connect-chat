@@ -14,15 +14,23 @@ import { signalRService } from "../../features/chat/signalrService";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
+import ChatHeader from "./header/ChatHeader";
+
+import type { Conversation } from "../../types/conversation";
+import { usePresence } from "../../features/presence/PresenceContext";
+
 interface Props {
-    conversationId?: string;
+    conversation?: Conversation;
 }
 
 export default function ChatWindow({
-    conversationId
+    conversation
 }: Props) {
 
     const { user } = useAuth();
+    const conversationId = conversation?.id;
+
+    const { isUserOnline } = usePresence();
 
     const [messages, setMessages] = useState<Message[]>([]);
 
@@ -334,36 +342,64 @@ export default function ChatWindow({
             }}
         >
 
+            <ChatHeader
+    name={conversation?.displayName ?? "Select Conversation"}
+    online={
+        conversation
+            ? isUserOnline(conversation.otherParticipantId)
+            : false
+    }
+/>
+
             <div
-                style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: 20
-                }}
-            >
+    className="
+        flex-1
+        overflow-y-auto
+        px-6
+        py-6
+    "
+    style={{
+        backgroundColor: "#eef2f7",
+        backgroundImage:
+            "radial-gradient(#d7dde7 1px, transparent 1px)",
+        backgroundSize: "26px 26px"
+    }}
+>
 
-                <h2>Messages</h2>
+    <div
+        className="
+            mx-auto
+            w-full
+            max-w-5xl
+        "
+    >
+<div className="mx-auto w-full max-w-3xl">
+        <MessageList
+            ref={bottomRef}
+            messages={messages}
+            currentUserId={user?.id ?? ""}
+        />
 
-                <MessageList
-                    ref={bottomRef}
-                    messages={messages}
-                    currentUserId={user?.id ?? ""}
-                />
+        </div>
 
-            </div>
+    </div>
+
+</div>
 
             {typingUser && (
 
-                <div
-                    style={{
-                        padding: "0 20px 10px",
-                        fontSize: 13,
-                        color: "#666",
-                        fontStyle: "italic"
-                    }}
-                >
-                    {typingUser} is typing...
-                </div>
+               <div
+    className="
+        px-8
+        pb-3
+        text-sm
+        italic
+        text-slate-500
+        animate-pulse
+    "
+>
+    {typingUser} is typing...
+</div>
 
             )}
 

@@ -6,6 +6,9 @@ using ChangePasswordCommand = Identity.Application.Features.Users.ChangePassword
 using ChangePasswordResponse = Identity.Application.Features.Users.ChangePassword.Response;
 using UpdateProfileCommand = Identity.Application.Features.Users.UpdateProfile.Command;
 using UpdateProfileResponse = Identity.Application.Features.Users.UpdateProfile.Response;
+using Identity.Application.Features.Users.GetUsers;
+using GetUserByIdQuery = Identity.Application.Features.Users.GetUserById.Query;
+using GetUserByIdResponse = Identity.Application.Features.Users.GetUserById.Response;
 
 namespace Identity.API.Controllers;
 
@@ -56,6 +59,33 @@ public class UsersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(command, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(List<GetUsersResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<List<GetUsersResponse>>> GetUsers(
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetUsersQuery(),
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(GetUserByIdResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetUserByIdResponse>> GetUserById(
+    Guid id,
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetUserByIdQuery(id),
+            cancellationToken);
 
         return Ok(result);
     }
