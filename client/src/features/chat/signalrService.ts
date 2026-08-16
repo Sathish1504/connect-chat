@@ -8,6 +8,7 @@ import {
 import { tokenStorage } from "../../auth/tokenStorage";
 import type { RealtimeMessage, MessageDeliveredEvent } from "../../types/realtimeMessage";
 import type { MessageReadEvent } from "../../types/messageReadEvent";
+import type { IncomingCall, CallType } from "../calling/types/call";
 
 class SignalRService {
 
@@ -110,6 +111,49 @@ class SignalRService {
                 content,
                 type
             });
+    }
+
+    async callUser(
+        targetUserId: string,
+        conversationId: string,
+        callType: CallType
+    ): Promise<void> {
+
+        if (!this.connection)
+            return;
+
+        await this.connection.invoke(
+            "CallUser",
+            {
+                targetUserId,
+                conversationId,
+                callType
+            }
+        );
+    }
+
+    onIncomingCall(
+        handler: (call: IncomingCall) => void
+    ): void {
+
+        if (!this.connection)
+            return;
+
+        this.connection.off("IncomingCall");
+
+        this.connection.on(
+            "IncomingCall",
+            (call: IncomingCall) => {
+                handler(call);
+            }
+        );
+    }
+    offIncomingCall(): void {
+
+        this.connection?.off(
+            "IncomingCall"
+        );
+
     }
 
     onReceiveMessage(

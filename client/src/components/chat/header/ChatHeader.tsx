@@ -6,19 +6,57 @@ import {
 } from "lucide-react";
 
 import ProfileAvatar from "../../profile/ProfileAvatar";
+import { signalRService } from "../../../features/chat/signalrService";
+import type { CallType } from "../../../features/calling/types/call";
 
 interface Props {
     name?: string;
     profilePicture?: string | null;
     online?: boolean;
+    targetUserId?: string;
+    conversationId?: string;
 }
 
 export default function ChatHeader({
     name = "Select Conversation",
     profilePicture,
-    online = false
+    online = false,
+    targetUserId,
+    conversationId
 }: Props) {
 
+
+    async function startCall(callType: CallType) {
+
+        if (!targetUserId || !conversationId) {
+            console.warn(
+                "Cannot start call: missing target user or conversation"
+            );
+            return;
+        }
+
+        try {
+
+            await signalRService.callUser(
+                targetUserId,
+                conversationId,
+                callType
+            );
+
+            console.log(
+                `📞 ${callType} call started`
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Failed to start call:",
+                error
+            );
+
+        }
+    }
     return (
 
         <header
@@ -72,10 +110,9 @@ export default function ChatHeader({
                                 h-2
                                 w-2
                                 rounded-full
-                                ${
-                                    online
-                                        ? "bg-green-500"
-                                        : "bg-slate-400"
+                                ${online
+                                    ? "bg-green-500"
+                                    : "bg-slate-400"
                                 }
                             `}
                         />
@@ -115,6 +152,9 @@ export default function ChatHeader({
                 </button>
 
                 <button
+                    type="button"
+                    onClick={() => void startCall("audio")}
+                    disabled={!targetUserId || !conversationId}
                     className="
                         rounded-full
                         p-3
@@ -122,12 +162,17 @@ export default function ChatHeader({
                         transition-all
                         hover:bg-slate-100
                         hover:text-blue-600
+                        disabled:cursor-not-allowed
+                        disabled:opacity-40
                     "
                 >
                     <Phone size={20} />
                 </button>
 
                 <button
+                    type="button"
+                    onClick={() => void startCall("video")}
+                    disabled={!targetUserId || !conversationId}
                     className="
                         rounded-full
                         p-3
@@ -135,6 +180,8 @@ export default function ChatHeader({
                         transition-all
                         hover:bg-slate-100
                         hover:text-blue-600
+                        disabled:cursor-not-allowed     
+                        disabled:opacity-40
                     "
                 >
                     <Video size={20} />

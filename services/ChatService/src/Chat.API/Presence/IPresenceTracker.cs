@@ -14,4 +14,18 @@ public interface IPresenceTracker
         Guid userId);
 
     Task<IReadOnlyCollection<Guid>> GetOnlineUsersAsync();
+
+    Task<IReadOnlyCollection<string>> GetConnectionIdsAsync(
+        Guid userId);
+
+    Task<IReadOnlyCollection<string>> GetChatConnectionIdsAsync(
+    Guid userId);
+
+    Task ChatConnectionAsync(
+        Guid userId,
+        string connectionId);
+
+    Task<bool> ChatDisconnectedAsync(
+        Guid userId,
+        string connectionId);
 }

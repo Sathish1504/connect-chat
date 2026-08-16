@@ -11,4 +11,6 @@ public interface IChatClient
     Task MessageDelivered(MessageDeliveredDto message);
 
     Task MessageRead(MessageReadDto message);
+
+    Task IncomingCall(object call);
 }
