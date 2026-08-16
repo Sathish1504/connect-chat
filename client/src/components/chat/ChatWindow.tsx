@@ -343,7 +343,7 @@ export default function ChatWindow({
             }}
         >
 
-            <ChatHeader
+           <ChatHeader
     name={conversation?.displayName ?? "Select Conversation"}
     profilePicture={
         conversation?.otherParticipantProfilePicture
@@ -352,6 +352,12 @@ export default function ChatWindow({
         conversation
             ? isUserOnline(conversation.otherParticipantId)
             : false
+    }
+    targetUserId={
+        conversation?.otherParticipantId
+    }
+    conversationId={
+        conversation?.id
     }
 />
 

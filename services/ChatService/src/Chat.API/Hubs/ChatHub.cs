@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using Chat.API.Presence;
 
 namespace Chat.API.Hubs;
 
@@ -11,21 +12,48 @@ namespace Chat.API.Hubs;
 public sealed class ChatHub : Hub
 {
     private readonly IMediator _mediator;
+    private readonly IPresenceTracker _presenceTracker;
 
-    public ChatHub(IMediator mediator)
+    public ChatHub(
+    IMediator mediator,
+    IPresenceTracker presenceTracker)
     {
         _mediator = mediator;
+        _presenceTracker = presenceTracker;
     }
 
     public override async Task OnConnectedAsync()
     {
-        Console.WriteLine($"Connected: {Context.UserIdentifier}");
+        var userId = Guid.Parse(
+            Context.User!
+                .FindFirst(ClaimTypes.NameIdentifier)!
+                .Value);
+
+        await _presenceTracker.ChatConnectionAsync(
+            userId,
+            Context.ConnectionId);
+
+        Console.WriteLine(
+            $"Chat connected: {userId} / {Context.ConnectionId}");
+
         await base.OnConnectedAsync();
     }
 
-    public override async Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(
+    Exception? exception)
     {
-        Console.WriteLine($"Disconnected: {Context.UserIdentifier}");
+        var userId = Guid.Parse(
+            Context.User!
+                .FindFirst(ClaimTypes.NameIdentifier)!
+                .Value);
+
+        await _presenceTracker.ChatDisconnectedAsync(
+            userId,
+            Context.ConnectionId);
+
+        Console.WriteLine(
+            $"Chat disconnected: {userId} / {Context.ConnectionId}");
+
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -41,6 +69,44 @@ public sealed class ChatHub : Hub
         await Groups.RemoveFromGroupAsync(
             Context.ConnectionId,
             HubGroups.Conversation(conversationId));
+    }
+
+    public async Task CallUser(
+    CallUserRequest request)
+    {
+        var callerId = Guid.Parse(
+            Context.User!
+                .FindFirst(ClaimTypes.NameIdentifier)!
+                .Value);
+
+        var connectionIds =
+            await _presenceTracker.GetChatConnectionIdsAsync(
+                request.TargetUserId);
+
+        if (connectionIds.Count == 0)
+        {
+            Console.WriteLine(
+                $"No ChatHub connection found for " +
+                $"{request.TargetUserId}");
+
+            return;
+        }
+
+        Console.WriteLine(
+            $"Calling {request.TargetUserId} " +
+            $"through {connectionIds.Count} ChatHub connection(s)");
+
+        await Clients
+            .Clients(connectionIds)
+            .SendAsync(
+                "IncomingCall",
+                new
+                {
+                    CallerId = callerId,
+                    TargetUserId = request.TargetUserId,
+                    ConversationId = request.ConversationId,
+                    CallType = request.CallType
+                });
     }
 
     public async Task StartTyping(Guid conversationId)
