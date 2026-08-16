@@ -9,7 +9,11 @@ using UpdateProfileResponse = Identity.Application.Features.Users.UpdateProfile.
 using Identity.Application.Features.Users.GetUsers;
 using GetUserByIdQuery = Identity.Application.Features.Users.GetUserById.Query;
 using GetUserByIdResponse = Identity.Application.Features.Users.GetUserById.Response;
+using UploadProfilePictureCommand =
+    Identity.Application.Features.Users.UploadProfilePicture.Command;
 
+using UploadProfilePictureResponse =
+    Identity.Application.Features.Users.UploadProfilePicture.Response;
 namespace Identity.API.Controllers;
 
 [ApiController]
@@ -85,6 +89,38 @@ public class UsersController : ControllerBase
     {
         var result = await _mediator.Send(
             new GetUserByIdQuery(id),
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPost("profile-picture")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(
+     typeof(UploadProfilePictureResponse),
+     StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UploadProfilePictureResponse>> UploadProfilePicture(
+     IFormFile file,
+     CancellationToken cancellationToken)
+    {
+        if (file is null)
+        {
+            return BadRequest("Profile picture file is required.");
+        }
+
+        await using var stream = file.OpenReadStream();
+
+        var command = new UploadProfilePictureCommand(
+            stream,
+            file.FileName,
+            file.ContentType,
+            file.Length);
+
+        var result = await _mediator.Send(
+            command,
             cancellationToken);
 
         return Ok(result);

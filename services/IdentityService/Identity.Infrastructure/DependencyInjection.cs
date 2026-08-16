@@ -1,14 +1,15 @@
 ﻿using Identity.Application.Interfaces;
+using Identity.Application.Interfaces.Security;
 using Identity.Infrastructure.Authentication;
 using Identity.Infrastructure.CurrentUser;
+using Identity.Infrastructure.Email;
 using Identity.Infrastructure.Persistence;
 using Identity.Infrastructure.Repositories;
+using Identity.Infrastructure.Security;
+using Identity.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Identity.Infrastructure.Email;
-using Identity.Application.Interfaces.Security;
-using Identity.Infrastructure.Security;
 
 namespace Identity.Infrastructure;
 
@@ -28,6 +29,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IFileStorage, LocalFileStorage>();
 
         services.AddJwtAuthentication(configuration);
         services.AddScoped<IEmailService, ConsoleEmailService>();
