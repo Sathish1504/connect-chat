@@ -81,6 +81,12 @@ public class User
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void RemoveProfilePicture()
+    {
+        ProfilePicture = null;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void SetRefreshToken(string refreshToken, DateTime expiryTime)
     {
         RefreshToken = refreshToken;

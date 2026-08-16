@@ -9,11 +9,11 @@ using UpdateProfileResponse = Identity.Application.Features.Users.UpdateProfile.
 using Identity.Application.Features.Users.GetUsers;
 using GetUserByIdQuery = Identity.Application.Features.Users.GetUserById.Query;
 using GetUserByIdResponse = Identity.Application.Features.Users.GetUserById.Response;
-using UploadProfilePictureCommand =
-    Identity.Application.Features.Users.UploadProfilePicture.Command;
+using UploadProfilePictureCommand =Identity.Application.Features.Users.UploadProfilePicture.Command;
+using UploadProfilePictureResponse =Identity.Application.Features.Users.UploadProfilePicture.Response;
+using DeleteProfilePictureCommand = Identity.Application.Features.Users.DeleteProfilePicture.Command;
+using DeleteProfilePictureResponse = Identity.Application.Features.Users.DeleteProfilePicture.Response;
 
-using UploadProfilePictureResponse =
-    Identity.Application.Features.Users.UploadProfilePicture.Response;
 namespace Identity.API.Controllers;
 
 [ApiController]
@@ -121,6 +121,22 @@ public class UsersController : ControllerBase
 
         var result = await _mediator.Send(
             command,
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpDelete("profile-picture")]
+    [ProducesResponseType(
+    typeof(DeleteProfilePictureResponse),
+    StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<DeleteProfilePictureResponse>> DeleteProfilePicture(
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new DeleteProfilePictureCommand(),
             cancellationToken);
 
         return Ok(result);
