@@ -27,6 +27,7 @@
   <ItemGroup>
     <Folder Include="Configuration\" />
     <Folder Include="Filters\" />
+    <Folder Include="uploads\profile-pictures\" />
   </ItemGroup>
 
 </Project>
