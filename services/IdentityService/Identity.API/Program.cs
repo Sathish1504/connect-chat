@@ -30,6 +30,8 @@ app.UseSwaggerDocumentation();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseProfilePictureStorage(
+    app.Environment);
 
 app.UseCors("ReactPolicy");
 
