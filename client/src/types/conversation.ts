@@ -10,6 +10,8 @@ export interface Conversation {
 
     otherParticipantId: string;
 
+    otherParticipantProfilePicture?: string | null;
+
     lastMessage?: string;
 
     lastMessageAt?: string;

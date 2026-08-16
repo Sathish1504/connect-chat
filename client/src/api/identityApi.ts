@@ -1,8 +1,10 @@
 import axios from "axios";
 import { tokenStorage } from "../auth/tokenStorage";
 
+export const IDENTITY_API_BASE_URL = "http://localhost:5176";
+
 export const identityApi = axios.create({
-    baseURL: "http://localhost:5176/api",
+    baseURL: `${IDENTITY_API_BASE_URL}/api`,
 });
 
 identityApi.interceptors.request.use(config => {

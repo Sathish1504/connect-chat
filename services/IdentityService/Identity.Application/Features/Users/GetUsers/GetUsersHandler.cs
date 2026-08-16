@@ -23,10 +23,12 @@ public sealed class GetUsersHandler
     {
         if (!_currentUserService.IsAuthenticated)
         {
-            throw new UnauthorizedAccessException("User is not authenticated.");
+            throw new UnauthorizedAccessException(
+                "User is not authenticated.");
         }
 
-        var users = await _userRepository.GetAllAsync(cancellationToken);
+        var users = await _userRepository.GetAllAsync(
+            cancellationToken);
 
         return users
             .Where(x => x.Id != _currentUserService.UserId)
@@ -35,6 +37,7 @@ public sealed class GetUsersHandler
                 x.Id,
                 x.UserName,
                 x.Email,
+                x.ProfilePicture,
                 x.IsOnline))
             .ToList();
     }

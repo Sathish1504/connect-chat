@@ -1,4 +1,6 @@
-import type { User } from "../../features/users/types/user"
+import type { User } from "../../features/users/types/user";
+
+import ProfileAvatar from "../profile/ProfileAvatar";
 
 interface Props {
     user: User;
@@ -11,43 +13,52 @@ export default function UserItem({
 }: Props) {
 
     return (
-
         <button
             onClick={() => onSelect(user)}
             className="
                 flex
                 w-full
                 items-center
-                justify-between
+                gap-4
                 rounded-xl
                 p-4
+                text-left
                 transition
                 hover:bg-slate-100
             "
         >
+            <ProfileAvatar
+                name={user.userName}
+                profilePicture={user.profilePicture}
+                online={user.isOnline}
+                size="md"
+            />
 
-            <div className="flex flex-col items-start">
+            <div className="min-w-0 flex-1">
 
-                <span className="font-semibold">
+                <span
+                    className="
+                        block
+                        truncate
+                        font-semibold
+                        text-slate-800
+                    "
+                >
                     {user.userName}
                 </span>
 
-                <span className="text-sm text-slate-500">
+                <span
+                    className="
+                        block
+                        truncate
+                        text-sm
+                        text-slate-500
+                    "
+                >
                     {user.email}
                 </span>
 
             </div>
-
-            <div
-                className={`h-3 w-3 rounded-full ${
-                    user.isOnline
-                        ? "bg-green-500"
-                        : "bg-slate-400"
-                }`}
-            />
-
         </button>
-
     );
-
 }

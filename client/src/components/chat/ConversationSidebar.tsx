@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, MessageCircle, Plus } from "lucide-react";
 
 import type { Conversation } from "../../types/conversation";
@@ -9,12 +10,14 @@ import ConversationItem from "./ConversationItem";
 
 import UserPickerModal from "../users/UserPickerModal";
 
+import ProfileAvatar from "../profile/ProfileAvatar";
+
 
 interface Props {
-
     conversations: (Conversation & {
         displayName: string;
     })[];
+
     selectedConversationId?: string;
 
     onConversationSelected: (
@@ -23,25 +26,26 @@ interface Props {
 
     onRefresh: () => Promise<void>;
 
+    profilePicture?: string | null;
+
+    userName?: string;
 }
 
 export default function ConversationSidebar({
 
     conversations,
-
     selectedConversationId,
-
     onConversationSelected,
-
-    onRefresh
+    onRefresh,
+    profilePicture,
+    userName
 
 }: Props) {
 
-
+    const navigate = useNavigate();
 
     const [showUserPicker, setShowUserPicker] =
         useState(false);
-
 
 
     return (
@@ -252,6 +256,57 @@ export default function ConversationSidebar({
                 )}
 
             </div>
+
+            <button
+                type="button"
+                onClick={() => navigate("/profile")}
+                className="
+        w-full
+        border-t
+        border-slate-200
+        bg-white
+        px-5
+        py-4
+        text-left
+        transition
+        hover:bg-slate-50
+    "
+            >
+                <div className="flex items-center gap-3">
+
+                    <ProfileAvatar
+                        name={userName}
+                        profilePicture={profilePicture}
+                        size="md"
+                    />
+
+                    <div className="min-w-0 flex-1">
+
+                        <p
+                            className="
+                    truncate
+                    text-sm
+                    font-semibold
+                    text-slate-800
+                "
+                        >
+                            {userName || "User"}
+                        </p>
+
+                        <p
+                            className="
+                    text-xs
+                    text-slate-500
+                "
+                        >
+                            My Profile
+                        </p>
+
+                    </div>
+
+                </div>
+            </button>
+
             <UserPickerModal
                 open={showUserPicker}
                 onClose={() => setShowUserPicker(false)}

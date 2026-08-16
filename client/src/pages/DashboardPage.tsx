@@ -14,7 +14,13 @@ import type { Conversation } from "../types/conversation";
 
 import { getUserById } from "../features/users/userService";
 
+import { getProfile } from "../features/profile/profileService";
+
+import { useAuth } from "../auth/AuthContext";
+
 export default function DashboardPage() {
+
+    const { user } = useAuth();
 
     const [conversations, setConversations] = useState<
         (Conversation & { displayName: string })[]
@@ -23,74 +29,99 @@ export default function DashboardPage() {
     const [selectedConversationId, setSelectedConversationId] =
         useState<string>();
 
+    const [profilePicture, setProfilePicture] =
+        useState<string | null>(null);
+
     useEffect(() => {
 
         void presenceService.start();
 
         void loadConversations();
+        void loadProfile();
 
     }, []);
 
-    async function loadConversations() {
+    async function loadProfile() {
 
-    try {
+        try {
 
-        const data = await getConversations();
+            const profile = await getProfile();
 
-        const mapped = await Promise.all(
+            setProfilePicture(
+                profile.profilePicture
+            );
 
-            data.map(async conversation => {
+        }
+        catch (error) {
 
-                if (conversation.type === 1) {
-
-                    const user = await getUserById(
-                        conversation.otherParticipantId
-                    );
-
-                    return {
-
-                        ...conversation,
-
-                        displayName: user.userName
-
-                    };
-
-                }
-
-                return {
-
-                    ...conversation,
-
-                    displayName:
-                        conversation.name
-
-                };
-
-            })
-
-        );
-
-        setConversations(mapped);
-
-        if (
-            mapped.length > 0 &&
-            !selectedConversationId
-        ) {
-
-            setSelectedConversationId(
-                mapped[0].id
+            console.error(
+                "Failed to load profile:",
+                error
             );
 
         }
 
     }
-    catch (error) {
 
-        console.error(error);
+    async function loadConversations() {
+
+        try {
+
+            const data = await getConversations();
+
+            const mapped = await Promise.all(
+
+                data.map(async conversation => {
+
+                    if (conversation.type === 1) {
+
+                        const user = await getUserById(
+                            conversation.otherParticipantId
+                        );
+
+                        return {
+                            ...conversation,
+                            displayName: user.userName,
+                            otherParticipantProfilePicture:
+                                user.profilePicture ?? null
+                        };
+
+                    }
+
+                    return {
+
+                        ...conversation,
+
+                        displayName:
+                            conversation.name
+
+                    };
+
+                })
+
+            );
+
+            setConversations(mapped);
+
+            if (
+                mapped.length > 0 &&
+                !selectedConversationId
+            ) {
+
+                setSelectedConversationId(
+                    mapped[0].id
+                );
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+        }
 
     }
-
-}
 
     return (
 
@@ -102,9 +133,15 @@ export default function DashboardPage() {
 
                     <ConversationSidebar
                         conversations={conversations}
-                        selectedConversationId={selectedConversationId}
-                        onConversationSelected={setSelectedConversationId}
+                        selectedConversationId={
+                            selectedConversationId
+                        }
+                        onConversationSelected={
+                            setSelectedConversationId
+                        }
                         onRefresh={loadConversations}
+                        profilePicture={profilePicture}
+                        userName={user?.username}
                     />
 
                 }
@@ -112,12 +149,14 @@ export default function DashboardPage() {
                 content={
 
                     <ChatWindow
-    conversation={
-        conversations.find(
-            x => x.id === selectedConversationId
-        )
-    }
-/>
+                        conversation={
+                            conversations.find(
+                                x =>
+                                    x.id ===
+                                    selectedConversationId
+                            )
+                        }
+                    />
 
                 }
 
@@ -126,5 +165,4 @@ export default function DashboardPage() {
         </PresenceProvider>
 
     );
-
 }
