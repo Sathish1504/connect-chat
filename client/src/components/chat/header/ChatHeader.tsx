@@ -5,18 +5,19 @@ import {
     MoreVertical
 } from "lucide-react";
 
+import ProfileAvatar from "../../profile/ProfileAvatar";
+
 interface Props {
     name?: string;
+    profilePicture?: string | null;
     online?: boolean;
 }
 
 export default function ChatHeader({
     name = "Select Conversation",
+    profilePicture,
     online = false
 }: Props) {
-
-    const avatar =
-        name.charAt(0).toUpperCase();
 
     return (
 
@@ -38,49 +39,12 @@ export default function ChatHeader({
 
             <div className="flex items-center gap-4">
 
-                <div className="relative">
-
-                    <div
-                        className="
-                            flex
-                            h-14
-                            w-14
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-gradient-to-br
-                            from-blue-500
-                            via-indigo-500
-                            to-purple-600
-                            text-xl
-                            font-bold
-                            text-white
-                            shadow-lg
-                        "
-                    >
-                        {avatar}
-                    </div>
-
-                    <span
-                        className={`
-                            absolute
-                            bottom-1
-                            right-1
-                            h-3.5
-                            w-3.5
-                            rounded-full
-                            border-2
-                            border-white
-                            shadow
-                            ${
-                                online
-                                    ? "bg-green-500"
-                                    : "bg-slate-400"
-                            }
-                        `}
-                    />
-
-                </div>
+                <ProfileAvatar
+                    name={name}
+                    profilePicture={profilePicture}
+                    online={online}
+                    size="lg"
+                />
 
                 <div>
 
@@ -194,5 +158,4 @@ export default function ChatHeader({
         </header>
 
     );
-
 }

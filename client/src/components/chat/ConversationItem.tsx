@@ -1,6 +1,8 @@
 import type { Conversation } from "../../types/conversation";
 import { usePresence } from "../../features/presence/PresenceContext";
 
+import ProfileAvatar from "../profile/ProfileAvatar";
+
 interface Props {
     conversation: Conversation;
     selected: boolean;
@@ -18,11 +20,6 @@ export default function ConversationItem({
     const online = isUserOnline(
         conversation.otherParticipantId
     );
-
-    const avatarLetter =
-        (conversation.displayName ?? "U")
-            .charAt(0)
-            .toUpperCase();
 
     return (
 
@@ -53,49 +50,14 @@ export default function ConversationItem({
 
             {/* Avatar */}
 
-            <div className="relative">
-
-                <div
-                    className="
-                        flex
-                        h-14
-                        w-14
-                        items-center
-                        justify-center
-                        rounded-full
-                        bg-gradient-to-br
-                        from-blue-500
-                        via-indigo-500
-                        to-purple-600
-                        text-lg
-                        font-bold
-                        text-white
-                        shadow-md
-                    "
-                >
-                    {avatarLetter}
-                </div>
-
-                <span
-                    className={`
-                        absolute
-                        bottom-1
-                        right-1
-                        h-3.5
-                        w-3.5
-                        rounded-full
-                        border-2
-                        border-white
-                        shadow
-                        ${
-                            online
-                                ? "bg-green-500"
-                                : "bg-slate-400"
-                        }
-                    `}
-                />
-
-            </div>
+            <ProfileAvatar
+                name={conversation.displayName}
+                profilePicture={
+                    conversation.otherParticipantProfilePicture
+                }
+                online={online}
+                size="lg"
+            />
 
             {/* Content */}
 
@@ -164,7 +126,7 @@ export default function ConversationItem({
                             text-white
                         "
                     >
-                       {/* TODO: Sprint 13 - Unread Count */} 
+                        {/* TODO: Sprint 13 - Unread Count */}
                     </div>
 
                 </div>
@@ -192,5 +154,4 @@ export default function ConversationItem({
         </button>
 
     );
-
 }

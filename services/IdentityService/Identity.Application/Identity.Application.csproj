@@ -19,8 +19,4 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Users\NewFolder\" />
-  </ItemGroup>
-
 </Project>

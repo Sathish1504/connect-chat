@@ -38,6 +38,7 @@ export default function ChatWindow({
 
     const bottomRef = useRef<HTMLDivElement>(null);
 
+
     useEffect(() => {
 
         bottomRef.current?.scrollIntoView({
@@ -344,6 +345,9 @@ export default function ChatWindow({
 
             <ChatHeader
     name={conversation?.displayName ?? "Select Conversation"}
+    profilePicture={
+        conversation?.otherParticipantProfilePicture
+    }
     online={
         conversation
             ? isUserOnline(conversation.otherParticipantId)
@@ -352,44 +356,44 @@ export default function ChatWindow({
 />
 
             <div
-    className="
+                className="
         flex-1
         overflow-y-auto
         px-6
         py-6
     "
-    style={{
-        backgroundColor: "#eef2f7",
-        backgroundImage:
-            "radial-gradient(#d7dde7 1px, transparent 1px)",
-        backgroundSize: "26px 26px"
-    }}
->
+                style={{
+                    backgroundColor: "#eef2f7",
+                    backgroundImage:
+                        "radial-gradient(#d7dde7 1px, transparent 1px)",
+                    backgroundSize: "26px 26px"
+                }}
+            >
 
-    <div
-        className="
+                <div
+                    className="
             mx-auto
             w-full
             max-w-5xl
         "
-    >
-<div className="mx-auto w-full max-w-3xl">
-        <MessageList
-            ref={bottomRef}
-            messages={messages}
-            currentUserId={user?.id ?? ""}
-        />
+                >
+                    <div className="mx-auto w-full max-w-3xl">
+                        <MessageList
+                            ref={bottomRef}
+                            messages={messages}
+                            currentUserId={user?.id ?? ""}
+                        />
 
-        </div>
+                    </div>
 
-    </div>
+                </div>
 
-</div>
+            </div>
 
             {typingUser && (
 
-               <div
-    className="
+                <div
+                    className="
         px-8
         pb-3
         text-sm
@@ -397,9 +401,9 @@ export default function ChatWindow({
         text-slate-500
         animate-pulse
     "
->
-    {typingUser} is typing...
-</div>
+                >
+                    {typingUser} is typing...
+                </div>
 
             )}
 
