@@ -27,3 +27,6 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+# User uploaded profile pictures
+services/IdentityService/Identity.API/uploads/
